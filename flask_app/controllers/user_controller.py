@@ -74,9 +74,9 @@ def dashboard():
     }
     
     user = User.get_by_id (query_data)
-    recipes = User.show_all_recipes(query_data)
+    recipes = Recipe.show_all_recipes()
 
-    return render_template('dashboard.html', user = user, recipes = recipes)
+    return render_template('dashboard.html', user = user, recipes = recipes, user_id = session['user_id'])
 
 ### LOGOUT ROUTE
 

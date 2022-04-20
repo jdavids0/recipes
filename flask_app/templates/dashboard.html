@@ -38,8 +38,10 @@
                             <td>No</td>
                         {% endif %}
                             <td><a href="/recipes/{{recipe.id}}">view instructions</a>&nbsp;
-                                <a href="recipes/edit/{{recipe.id}}">edit</a>&nbsp;
+                                {% if recipe.user_id == user_id %}
+                                <a href="/recipes/edit/{{recipe.id}}">edit</a>&nbsp;
                                 <a href="/recipes/delete/{{recipe.id}}">delete</a>
+                                {% endif %}
                             </td>
                     </tr>
                     {% endfor %}

@@ -46,12 +46,13 @@ def get_one_recipe(recipe_id):
     if 'user_id' not in session:
         flash ('Please login or register to continue')
         return redirect('/')
+        
 
-    # gather query data, query with data, 
-
+    # gather query data
     query_data = {
         'recipe_id' : recipe_id
     }
+    # query using data
     recipe = Recipe.get_one_recipe(query_data)
 
     # recipe (gets passed to HTML) = recipe (being passed in from function)
@@ -72,7 +73,7 @@ def show_edit_recipe(recipe_id):
 
     return render_template ('update_recipe.html', recipe = recipe)
 
-@app.route('/recipes/update/int:recipe_id', methods = ['POST'])
+@app.route('/recipes/update/<int:recipe_id>', methods = ['POST'])
 def edit_recipe(recipe_id):
     # validate information
     if not Recipe.validate_recipe(request.form):

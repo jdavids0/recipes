@@ -118,28 +118,28 @@ class User:
         
         return cls (result[0])
     
-    @classmethod
-    def show_all_recipes(cls, data):
-        query = "SELECT * FROM users LEFT JOIN recipes ON recipes.user_id = users.id WHERE users.id = %(user_id)s;"
+    # @classmethod
+    # def show_all_recipes(cls, data):
+    #     query = "SELECT * FROM users LEFT JOIN recipes ON recipes.user_id = users.id;"
         
-        result = connectToMySQL(cls.db).query_db(query, data)
+    #     result = connectToMySQL(cls.db).query_db(query, data)
 
-        user = []
-        for row in result:
-            recipe_data = {
-                'id': row['recipes.id'],
-                'name': row['name'],
-                'time': row['time'],
-                'date': row['date'],
-                'instructions': row['instructions'],
-                'description': row['description'],
-                'created_at': row['recipes.created_at'],
-                'updated_at': row['recipes.updated_at'],
-                'user_id' : row['user_id']
-            }
-            recipe.user = recipe.Recipe(recipe_data)
-            user.append(recipe_data)
+    #     all_recipes = []
+    #     for row in result:
+    #         recipe_data = {
+    #             'id': row['recipes.id'],
+    #             'name': row['name'],
+    #             'time': row['time'],
+    #             'date': row['date'],
+    #             'instructions': row['instructions'],
+    #             'description': row['description'],
+    #             'created_at': row['recipes.created_at'],
+    #             'updated_at': row['recipes.updated_at'],
+    #             'user_id' : row['user_id']
+    #         }
+    #         one_recipe = recipe.Recipe(recipe_data)
+    #         all_recipes.append(one_recipe)
     
     
-        return user
+    #     return all_recipes
         

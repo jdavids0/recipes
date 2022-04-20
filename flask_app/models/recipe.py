@@ -5,12 +5,8 @@ from flask_app.models import user
 
 from flask import flash
 
-from flask_bcrypt import Bcrypt
-bcrypt = Bcrypt(app)
-
-import re
-
-EMAIL_REGEX = re.compile (r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
+# from flask_bcrypt import Bcrypt
+# bcrypt = Bcrypt(app)
 
 class Recipe:
     db = "recipes"
@@ -26,7 +22,7 @@ class Recipe:
         # empty dictionary to represent a single instance of User
         # i.e. 1:m (every recipe has only one user)
         # alternative would be to do recipe = cls(result[0]) in classmethod
-        self.creator = {}
+        self.user = {}
         self.user_id = data['user_id']
 
     @staticmethod
@@ -47,30 +43,28 @@ class Recipe:
 
         return is_valid
 
-    # @classmethod
-    # def show_all_recipes(cls):
-    #     query ="SELECT * FROM recipes JOIN users ON recipes.user_id = users.id;"
-    #     # query = "SELECT * FROM users LEFT JOIN recipes ON recipes.user_id = users.id WHERE users.id = %(user_id)s;"
+    @classmethod
+    def show_all_recipes(cls):
+        query ="SELECT * FROM recipes LEFT JOIN users ON recipes.user_id = users.id;"
 
-    #     result = connectToMySQL(cls.db).query_db(query)
-
-    #     all_recipes = []
-    #     for row in result:
-    #         recipe = cls(row)
-    #         user_data = {
-    #             'id' : row['users.id'],
-    #         'first_name' :row['first_name'],
-    #         'last_name' : row['last_name'],
-    #         'email' : row['email'],
-    #         'password' : row['password'],
-    #         'created_at' : row['users.created_at'],
-    #         'updated_at' : row['users.updated_at']
-    #         }
-    #         recipe.user = user.User(user_data)
-    #         all_recipes.append(recipe)
-
-    #     return all_recipes
-
+        results = connectToMySQL(cls.db).query_db(query)
+        
+        all_recipes = []
+        for row in results:
+            recipe = cls(row)
+            user_data = {
+                'id' : row['users.id'],
+            'first_name' :row['first_name'],
+            'last_name' : row['last_name'],
+            'email' : row['email'],
+            'password' : row['password'],
+            'created_at' : row['users.created_at'],
+            'updated_at' : row['users.updated_at']
+            }
+            recipe.user = user.User(user_data)
+            all_recipes.append(recipe)        
+            
+        return all_recipes
     
     @classmethod
     def create_recipe(cls, data):
@@ -81,11 +75,14 @@ class Recipe:
     @classmethod
     def get_one_recipe(cls, data):
         query = "SELECT * FROM recipes LEFT JOIN users ON recipes.user_id = users.id WHERE recipes.id = %(recipe_id)s;"
+
+        query = "SELECT * FROM users WHERE users.id = %(users_id)s"
         
         results = connectToMySQL(cls.db).query_db(query, data)
-        print(results)
-        # only one result in the list of dictionaries that query will return, so 
+
+        # i.e. an instance of the class Recipe
         recipe = cls(results[0])
+
         # remember to differentiate any attributes that conflict with attributes (i.e. table columns) of another class
         user_data = {
             'id' : results[0]['users.id'],
@@ -97,17 +94,17 @@ class Recipe:
             'updated_at' : results[0]['users.updated_at']
         }
         print(user_data)
-        temp = user.User(user_data)
-        print(temp)
-        recipe.creator = temp
+        # recipe.user = user.User(user_data)
+        recipe.user = user.User(user_data)
         return recipe
 
-    # @classmethod
-    # def edit_recipe(cls, data):
-    #     query = "UPDATE recipes SET name = %(name)s, description = %(description)s, instructions = %(instructions)s date = %(date)s, time = %(times)s, updated_at = NOW() WHERE id = %(recipe_id)s;"
-    #     # don't actually need to declare a variable (i.e. results) bc UPDATE query won't return anything
-    #     results = connectToMySQL(cls.db).query_db(query, data)
-    #     return
+    @classmethod
+    def edit_recipe(cls, data):
+        query = "UPDATE recipes SET name = %(name)s, description = %(description)s, instructions = %(instructions)s, date = %(date)s, time = %(time)s, updated_at = NOW() WHERE recipes.id = %(recipe_id)s;"
+
+        # UPDATE queries don't return any data so don't actually need to declare a variable (i.e. results) or return anything
+        results = connectToMySQL(cls.db).query_db(query, data)
+        return
 
 
     @classmethod
