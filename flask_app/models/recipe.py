@@ -76,7 +76,7 @@ class Recipe:
     def get_one_recipe(cls, data):
         query = "SELECT * FROM recipes LEFT JOIN users ON recipes.user_id = users.id WHERE recipes.id = %(recipe_id)s;"
 
-        query = "SELECT * FROM users WHERE users.id = %(users_id)s"
+        # query = "SELECT * FROM users WHERE users.id = %(users_id)s"
         
         results = connectToMySQL(cls.db).query_db(query, data)
 
